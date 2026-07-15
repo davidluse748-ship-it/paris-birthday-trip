@@ -1,13 +1,13 @@
 {
-  "name": "Paris Day Trip Itinerary",
+  "name": "Paris Birthday Trip Itinerary",
   "short_name": "Paris Trip",
   "description": "Your perfect one-day Paris itinerary with timeline, maps, and flight reminders",
-  "start_url": "/",
+  "start_url": "/paris-birthday-trip/",
   "display": "standalone",
   "background_color": "#0A0A0A",
   "theme_color": "#D4AF37",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "/paris-birthday-trip/",
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23D4AF37' width='192' height='192' rx='45'/><text x='96' y='120' font-size='100' font-weight='bold' text-anchor='middle' fill='%23000' font-family='system-ui'>✦</text></svg>",

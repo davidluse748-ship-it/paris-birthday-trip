@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Paris Trip">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/paris-birthday-trip/manifest.json">
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23D4AF37' width='192' height='192'/><text x='96' y='120' font-size='120' font-weight='bold' text-anchor='middle' fill='%23000' font-family='system-ui'>✦</text></svg>">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23D4AF37' width='192' height='192' rx='45'/><text x='96' y='120' font-size='100' font-weight='bold' text-anchor='middle' fill='%23000' font-family='system-ui'>✦</text></svg>">
     <title>Paris Day Trip</title>
@@ -213,6 +213,7 @@
         .timeline-item:nth-child(7) { animation-delay: 0.8s; }
         .timeline-item:nth-child(8) { animation-delay: 0.85s; }
         .timeline-item:nth-child(9) { animation-delay: 0.9s; }
+        .timeline-item:nth-child(10) { animation-delay: 0.95s; }
 
         .timeline-dot {
             position: absolute;
@@ -454,7 +455,7 @@
     <div class="container">
         <div class="header">
             <h1>✦ Paris</h1>
-            <p>Wednesday, July 15, 2025</p>
+            <p>Thursday, July 16, 2026</p>
         </div>
 
         <div class="progress-section">
@@ -507,7 +508,7 @@
 
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
+            navigator.serviceWorker.register('/paris-birthday-trip/service-worker.js')
                 .then(reg => console.log('Service Worker registered'))
                 .catch(err => console.log('Service Worker registration failed:', err));
         }
@@ -523,6 +524,7 @@
                 meta: ['EasyJet EZY2433'],
                 description: 'Landing time and airport arrival',
                 mapCoord: '49.0097,2.5479',
+                location: 'Charles de Gaulle Airport Terminal 2D',
                 completed: true
             },
             {
@@ -582,11 +584,22 @@
             },
             {
                 time: '15:30',
+                timeEnd: '15:35',
+                title: 'Walk Along the Seine',
+                emoji: '🚶',
+                subtitle: 'Scenic River Walk',
+                meta: ['Toward Eiffel Tower'],
+                description: 'Walk west along the Seine keeping the river on the right towards the Eiffel Tower.',
+                mapCoord: '48.8620,2.2950',
+                location: 'Seine River Walk Paris'
+            },
+            {
+                time: '15:35',
                 timeEnd: '17:05',
                 title: 'Eiffel Tower',
                 emoji: '🗼',
                 subtitle: 'Level 2 Access',
-                meta: ['1h 35m visit'],
+                meta: ['1h 30m visit'],
                 description: 'Ascend to Level 2 for breathtaking views of Paris and the Seine.',
                 mapCoord: '48.8584,2.2945',
                 location: 'Eiffel Tower Paris'
@@ -594,9 +607,9 @@
             {
                 time: '17:30',
                 timeEnd: '18:50',
-                title: 'ELIO Trattoria',
+                title: '❤️ Birthday Surprise Dinner',
                 emoji: '🍝',
-                subtitle: 'Italian Restaurant',
+                subtitle: 'Special Evening',
                 meta: ['20 min walk', 'Dinner'],
                 description: 'Dinner near Eiffel Tower. Time to relax and reflect on your Paris day.',
                 mapCoord: '48.8550,2.3000',
@@ -617,15 +630,15 @@
 
         function generateTimeline() {
             const timeline = document.getElementById('timeline');
+            timeline.innerHTML = '';
             const now = new Date();
-            const dayStart = new Date(now);
-            dayStart.setHours(8, 30, 0, 0);
-            const dayEnd = new Date(now);
-            dayEnd.setHours(22, 25, 0, 0);
+            const tripDate = new Date('2026-07-16');
+            const dayStart = new Date('2026-07-16T08:30:00');
+            const dayEnd = new Date('2026-07-16T22:25:00');
 
             itinerary.forEach((item, index) => {
                 const [hours, mins] = item.time.split(':').map(Number);
-                const itemTime = new Date(now);
+                const itemTime = new Date('2026-07-16');
                 itemTime.setHours(hours, mins, 0, 0);
 
                 const isCompleted = now > itemTime;
@@ -641,7 +654,14 @@
                 if (item.mapCoord) {
                     buttonsHTML = `
                         <div class="button-group">
-                            <button class="btn btn-primary" onclick="openMaps('${item.mapCoord}', '${item.location}')">\n                                📍 Maps\n                            </button>\n                            <button class="btn btn-secondary" onclick="openDirections('${item.mapCoord}')">\n                                🧭 Directions\n                            </button>\n                        </div>\n                    `;
+                            <button class="btn btn-primary" onclick="openMaps('${item.mapCoord}', '${item.location}')">
+                                📍 Maps
+                            </button>
+                            <button class="btn btn-secondary" onclick="openDirections('${item.mapCoord}')">
+                                🧭 Directions
+                            </button>
+                        </div>
+                    `;
                 }
 
                 card.innerHTML = `
@@ -663,12 +683,25 @@
 
         function updateProgress() {
             const now = new Date();
-            const dayStart = new Date(now);
-            dayStart.setHours(8, 30, 0, 0);
-            const dayEnd = new Date(now);
-            dayEnd.setHours(22, 25, 0, 0);
+            const dayStart = new Date('2026-07-16T08:30:00');
+            const dayEnd = new Date('2026-07-16T22:25:00');
 
-            const progress = Math.max(0, Math.min(100, ((now - dayStart) / (dayEnd - dayStart)) * 100));
+            let progress = 0;
+            
+            if (now < dayStart) {
+                // Before trip starts
+                progress = 0;
+            } else if (now > dayEnd) {
+                // After trip ends
+                progress = 100;
+            } else {
+                // During trip - calculate progress based on time elapsed
+                const totalDuration = dayEnd - dayStart;
+                const elapsedTime = now - dayStart;
+                progress = (elapsedTime / totalDuration) * 100;
+            }
+
+            progress = Math.max(0, Math.min(100, progress));
             document.getElementById('progress-fill').style.width = progress + '%';
             document.getElementById('progress-time').textContent = Math.round(progress) + '%';
         }
@@ -685,7 +718,6 @@
         }
 
         function openDirections(coord) {
-            const now = new Date();
             const userLat = 48.8566; // Paris center as default
             const userLng = 2.3522;
             const [lat, lng] = coord.split(',');
@@ -726,10 +758,6 @@
         // Initialize
         generateTimeline();
         setInterval(updateProgress, 60000); // Update every minute
-
-        // Simulate current time for demo (comment out in production)
-        // You can uncomment the line below and set it to a time during the day to test
-        // Date.prototype.getTime = () => new Date('2025-07-15T14:30:00').getTime();
     </script>
 </body>
 </html>
