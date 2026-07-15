@@ -1,1 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your perfect one-day Paris itinerary">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Paris Trip">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23D4AF37' width='192' height='192'/><text x='96' y='120' font-size='120' font-weight='bold' text-anchor='middle' fill='%23000' font-family='system-ui'>✦</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23D4AF37' width='192' height='192' rx='45'/><text x='96' y='120' font-size='100' font-weight='bold' text-anchor='middle' fill='%23000' font-family='system-ui'>✦</text></svg>">
+    <title>Paris Day Trip</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        :root {
+            --primary: #D4AF37;
+            --primary-dark: #B8960F;
+            --secondary: #1F1F1F;
+            --tertiary: #2D2D2D;
+            --accent: #FF6B6B;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0A0A0;
+            --bg-dark: #0A0A0A;
+            --card-bg: #1a1a1a;
+            --border: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-top: 16px;
+            padding-bottom: 32px;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary), #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            margin-bottom: 24px;
+            animation: slideDown 0.6s ease-out 0.1s both;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: var(--tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 3px;
+            transition: width 0.6s ease-out;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Weather Card */
+        .weather-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            animation: slideDown 0.6s ease-out 0.2s both;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .weather-info h3 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .weather-temp {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .weather-emoji {
+            font-size: 48px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Flight Alert */
+        .flight-alert {
+            background-color: var(--card-bg);
+            border: 1.5px solid var(--accent);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            animation: slideDown 0.6s ease-out 0.3s both;
+        }
+
+        .flight-alert-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .flight-alert p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .flight-info {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+
+        .flight-info span {
+            padding: 4px 8px;
+            background-color: rgba(212, 175, 55, 0.1);
+            border-radius: 6px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            animation: slideDown 0.6s ease-out 0.4s both;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary), transparent);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-left: 50px;
+            animation: slideUp 0.5s ease-out backwards;
+        }
+
+        .timeline-item:nth-child(1) { animation-delay: 0.5s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.55s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.6s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.65s; }
+        .timeline-item:nth-child(5) { animation-delay: 0.7s; }
+        .timeline-item:nth-child(6) { animation-delay: 0.75s; }
+        .timeline-item:nth-child(7) { animation-delay: 0.8s; }
+        .timeline-item:nth-child(8) { animation-delay: 0.85s; }
+        .timeline-item:nth-child(9) { animation-delay: 0.9s; }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            background-color: var(--bg-dark);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .timeline-dot.completed {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+        }
+
+        .timeline-dot.current {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .timeline-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.1);
+        }
+
+        .timeline-card.completed {
+            opacity: 0.7;
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timeline-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .timeline-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .timeline-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+
+        .meta-badge {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .timeline-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #000;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 6px rgba(212, 175, 55, 0.15);
+        }
+
+        .btn-secondary {
+            background-color: var(--tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:active {
+            background-color: var(--border);
+            transform: scale(0.98);
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 24px rgba(212, 175, 55, 0.6);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 12px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .btn {
+                padding: 11px 14px;
+                font-size: 13px;
+            }
+
+            .timeline-card {
+                padding: 14px;
+            }
+        }
+
+        /* Install prompt */
+        .install-prompt {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-prompt h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .install-prompt p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .install-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .install-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✦ Paris</h1>
+            <p>Wednesday, July 15, 2025</p>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-label">
+                <span>Day Progress</span>
+                <span id="progress-time">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <div id="install-prompt" class="install-prompt">
+            <h3>📱 Install App</h3>
+            <p>Add this trip to your home screen for quick access</p>
+            <button class="install-btn" onclick="installApp()">Install</button>
+        </div>
+
+        <div class="weather-card">
+            <div class="weather-info">
+                <h3>Paris Today</h3>
+                <div class="weather-temp">22°C</div>
+                <p style="font-size: 12px; opacity: 0.9;">Mostly sunny</p>
+            </div>
+            <div class="weather-emoji">☀️</div>
+        </div>
+
+        <div class="flight-alert">
+            <div class="flight-alert-header">✈️ OUTBOUND FLIGHT</div>
+            <p>EasyJet EZY2433 | CDG Terminal 2D</p>
+            <div class="flight-info">
+                <span>📍 Depart: 08:30</span>
+                <span>🛬 Arrive: 09:20</span>
+            </div>
+        </div>
+
+        <div class="timeline" id="timeline">
+            <!-- Timeline items will be inserted here -->
+        </div>
+
+        <div class="flight-alert" style="margin-top: 24px;">
+            <div class="flight-alert-header">✈️ RETURN FLIGHT</div>
+            <p>EasyJet EZY2440 | CDG Terminal 2D</p>
+            <div class="flight-info">
+                <span>📍 Depart: 22:25</span>
+                <span>⏱ Check-in: 20:25</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed:', err));
+        }
+
+        // Itinerary data
+        const itinerary = [
+            {
+                time: '08:30',
+                timeEnd: '09:20',
+                title: 'Arrive Paris',
+                emoji: '✈️',
+                subtitle: 'Charles de Gaulle Terminal 2D',
+                meta: ['EasyJet EZY2433'],
+                description: 'Landing time and airport arrival',
+                mapCoord: '49.0097,2.5479',
+                completed: true
+            },
+            {
+                time: '10:10',
+                timeEnd: '10:30',
+                title: 'Maison Louvard',
+                emoji: '🥐',
+                subtitle: 'Crookie & Coffee',
+                meta: ['10 min walk from Louvre'],
+                description: 'Delicious French pastry and croissant.',
+                mapCoord: '48.8631,2.3322',
+                location: 'Maison Louvard, Paris'
+            },
+            {
+                time: '10:30',
+                timeEnd: '11:05',
+                title: 'Wonderland Brunch',
+                emoji: '🍳',
+                subtitle: 'Breakfast/Brunch',
+                meta: ['15 min walk'],
+                description: 'Beautiful brunch venue in central Paris.',
+                mapCoord: '48.8623,2.3355',
+                location: 'Wonderland Paris Brunch'
+            },
+            {
+                time: '11:30',
+                timeEnd: '13:35',
+                title: 'Louvre Museum',
+                emoji: '🖼️',
+                subtitle: 'World\'s Largest Art Museum',
+                meta: ['2h visit'],
+                description: 'Must-see: Mona Lisa, Venus de Milo, and more masterpieces.',
+                mapCoord: '48.8606,2.3352',
+                location: 'Louvre Museum Paris'
+            },
+            {
+                time: '13:40',
+                timeEnd: '14:20',
+                title: 'Tuileries Garden',
+                emoji: '🌳',
+                subtitle: 'Historic Royal Garden',
+                meta: ['10 min walk from Louvre'],
+                description: 'Stroll through beautiful gardens between Louvre and Champs-Élysées.',
+                mapCoord: '48.8631,2.3298',
+                location: 'Tuileries Garden Paris'
+            },
+            {
+                time: '14:20',
+                timeEnd: '15:30',
+                title: 'Pont Alexandre III',
+                emoji: '🌉',
+                subtitle: 'Most Beautiful Bridge',
+                meta: ['20 min walk', 'Walk west along Seine'],
+                description: 'Iconic bridge with stunning views. Keep the river on your right toward Eiffel Tower.',
+                mapCoord: '48.8656,2.3125',
+                location: 'Pont Alexandre III Paris'
+            },
+            {
+                time: '15:30',
+                timeEnd: '17:05',
+                title: 'Eiffel Tower',
+                emoji: '🗼',
+                subtitle: 'Level 2 Access',
+                meta: ['1h 35m visit'],
+                description: 'Ascend to Level 2 for breathtaking views of Paris and the Seine.',
+                mapCoord: '48.8584,2.2945',
+                location: 'Eiffel Tower Paris'
+            },
+            {
+                time: '17:30',
+                timeEnd: '18:50',
+                title: 'ELIO Trattoria',
+                emoji: '🍝',
+                subtitle: 'Italian Restaurant',
+                meta: ['20 min walk', 'Dinner'],
+                description: 'Dinner near Eiffel Tower. Time to relax and reflect on your Paris day.',
+                mapCoord: '48.8550,2.3000',
+                location: 'ELIO Trattoria Paris'
+            },
+            {
+                time: '18:50',
+                timeEnd: '22:25',
+                title: 'Return to CDG',
+                emoji: '✈️',
+                subtitle: 'Terminal 2D Check-in',
+                meta: ['45 min drive', 'Depart 22:25'],
+                description: 'Head back to airport with plenty of time for check-in (arrive by 20:25).',
+                mapCoord: '49.0097,2.5479',
+                location: 'Charles de Gaulle Airport Terminal 2D'
+            }
+        ];
+
+        function generateTimeline() {
+            const timeline = document.getElementById('timeline');
+            const now = new Date();
+            const dayStart = new Date(now);
+            dayStart.setHours(8, 30, 0, 0);
+            const dayEnd = new Date(now);
+            dayEnd.setHours(22, 25, 0, 0);
+
+            itinerary.forEach((item, index) => {
+                const [hours, mins] = item.time.split(':').map(Number);
+                const itemTime = new Date(now);
+                itemTime.setHours(hours, mins, 0, 0);
+
+                const isCompleted = now > itemTime;
+                const isCurrent = index === Math.floor((now - dayStart) / (dayEnd - dayStart) * itinerary.length);
+
+                const card = document.createElement('div');
+                card.className = 'timeline-item';
+
+                const dotClass = isCompleted ? 'completed' : (isCurrent ? 'current' : '');
+                const cardClass = isCompleted ? 'completed' : '';
+
+                let buttonsHTML = '';
+                if (item.mapCoord) {
+                    buttonsHTML = `
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="openMaps('${item.mapCoord}', '${item.location}')">\n                                📍 Maps\n                            </button>\n                            <button class="btn btn-secondary" onclick="openDirections('${item.mapCoord}')">\n                                🧭 Directions\n                            </button>\n                        </div>\n                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="timeline-dot ${dotClass}">${item.emoji}</div>
+                    <div class="timeline-card ${cardClass}">
+                        <div class="timeline-time">${item.time} - ${item.timeEnd}</div>
+                        <div class="timeline-title">${item.title}</div>
+                        <div class="timeline-subtitle">${item.subtitle}</div>
+                        ${item.meta.length > 0 ? `<div class="timeline-meta">${item.meta.map(m => `<span class="meta-badge">${m}</span>`).join('')}</div>` : ''}
+                        <div class="timeline-description">${item.description}</div>
+                        ${buttonsHTML}
+                    </div>
+                `;
+                timeline.appendChild(card);
+            });
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const now = new Date();
+            const dayStart = new Date(now);
+            dayStart.setHours(8, 30, 0, 0);
+            const dayEnd = new Date(now);
+            dayEnd.setHours(22, 25, 0, 0);
+
+            const progress = Math.max(0, Math.min(100, ((now - dayStart) / (dayEnd - dayStart)) * 100));
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('progress-time').textContent = Math.round(progress) + '%';
+        }
+
+        function openMaps(coord, location) {
+            const mapsUrl = `https://maps.apple.com/?q=${encodeURIComponent(location)}&ll=${coord}`;
+            const fallback = `https://www.google.com/maps/search/${encodeURIComponent(location)}`;
+            
+            // Try Apple Maps first (iOS), fall back to Google Maps
+            window.location.href = mapsUrl;
+            setTimeout(() => {
+                window.location.href = fallback;
+            }, 1000);
+        }
+
+        function openDirections(coord) {
+            const now = new Date();
+            const userLat = 48.8566; // Paris center as default
+            const userLng = 2.3522;
+            const [lat, lng] = coord.split(',');
+            
+            const mapsUrl = `https://maps.apple.com/?saddr=${userLat},${userLng}&daddr=${lat},${lng}`;
+            const fallback = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+            
+            window.location.href = mapsUrl;
+            setTimeout(() => {
+                window.location.href = fallback;
+            }, 1000);
+        }
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('install-prompt').classList.remove('show');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-prompt').classList.add('show');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('install-prompt').classList.remove('show');
+        });
+
+        // Initialize
+        generateTimeline();
+        setInterval(updateProgress, 60000); // Update every minute
+
+        // Simulate current time for demo (comment out in production)
+        // You can uncomment the line below and set it to a time during the day to test
+        // Date.prototype.getTime = () => new Date('2025-07-15T14:30:00').getTime();
+    </script>
+</body>
+</html>
